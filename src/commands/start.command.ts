@@ -1,6 +1,8 @@
 import { Markup, Telegraf } from "telegraf";
 import { IBotContext } from "../context/context.interface";
 import { Command } from "./command.class";
+import fs from "fs";
+import path from "path";
 
 export class StartCommand extends Command {
   constructor(bot: Telegraf<IBotContext>) {
@@ -8,25 +10,17 @@ export class StartCommand extends Command {
   }
 
   handle(): void {
-    this.bot.start((ctx) => {
-      console.log(ctx.session);
-      ctx.reply(
-        "Do you like Vadim Sheg?",
-        Markup.inlineKeyboard([
-          Markup.button.callback("Yes", "yes"),
-          Markup.button.callback("No", "no"),
-        ])
-      )
-    });
-
-    this.bot.action("yes", (ctx) => {
-      ctx.session.like = true;
-      ctx.editMessageText("Well, you have some problems.");
-    });
-
-    this.bot.action("no", (ctx) => {
-      ctx.session.like = false;
-      ctx.editMessageText("Great! Are you completely fine ツ");
+    this.bot.start(async (ctx) => {
+      try {
+        const dir = path.join(__dirname, "..", "soundboards"),
+              files = fs.readdirSync(dir),
+              randomFile = files[Math.floor(Math.random() * files.length)],
+              filePath = path.join(dir, randomFile)
+        await ctx.replyWithAudio({ source: filePath })
+      } catch (err) {
+        console.log("Error playing soundboard file:", err);
+        await ctx.reply("An error occurred while playing the audio file. Try again later ツ");
+      }
     });
   }
 }

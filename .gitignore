@@ -1,4 +1,5 @@
 /node_modules
+/soundboards
 /dist
 .env
 sessions.json
