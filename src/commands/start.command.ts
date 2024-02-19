@@ -20,8 +20,8 @@ export class StartCommand extends Command {
         await ctx.replyWithAudio({ source: filePath });
         await ctx.deleteMessage();
       } catch (err) {
-        console.log("Error playing soundboard file:", err);
-        await ctx.reply("An error occurred while playing the audio file. Try again later ツ");
+        console.log(err);
+        await ctx.reply(err + " ツ");
       }
     });
   }
